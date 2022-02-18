@@ -3,7 +3,6 @@ Modle base classes to run the game and display elements to the user
 ModleGame: game logic
 Modle: game display
 """
-import _tkinter
 import random
 import string
 import sys
@@ -11,6 +10,7 @@ import time
 from dataclasses import dataclass
 from distutils.util import strtobool
 from tkinter import Tk
+import _tkinter
 
 from colorama import Fore, Style, Back
 
@@ -54,20 +54,32 @@ class ModleGame:
         """
         # for each letter, attribute color depending on the position in the word to guess
         word_output = []
+
+        # used in the rare cases where the current word contains several time the same letter
+        # and the word to guess only once but not in the same position
+        # E.g: to guess: PEGRE > user input TARIR
+        # (first R needs to be yellow and the second R needs to be grey)
+        tmp_letter_yellow = []
+        tmp_letter_green = []
+
         for index, letter in enumerate(guess):
             if letter in self.word_to_guess:
                 if self.word_to_guess.find(letter, index) == index:
                     word_output.append(Style.BRIGHT + Fore.GREEN + letter)
                     self.letters_green.append(letter)
+                    tmp_letter_green.append(letter)
                     self.final_output += "🟩"
                 else:
                     # if the guess has several time the same letter and our word not
-                    if guess.count(letter) > self.word_to_guess.count(letter):
+                    # we need to define if the letter is already in yellow for this word
+                    is_letter_duplicate = guess.count(letter) > self.word_to_guess.count(letter)
+                    if is_letter_duplicate and letter in tmp_letter_yellow or letter in tmp_letter_green:
                         word_output.append(Style.BRIGHT + Fore.LIGHTBLACK_EX + letter)
                         self.letters_grey.append(letter)
                         self.final_output += "⬛"
                     else:
                         word_output.append(Style.BRIGHT + Fore.YELLOW + letter)
+                        tmp_letter_yellow.append(letter)
                         self.letters_yellow.append(letter)
                         self.final_output += "🟨"
             else:
@@ -268,6 +280,7 @@ class Modle:
         Ask the user if he/she wants to try again
         :return: bool
         """
+        print("")
         print(f"Le mot à deviner était: {Style.BRIGHT + Fore.BLUE + self.game.word_to_guess}")
         return self.prompt_bool("Try again ?")
 

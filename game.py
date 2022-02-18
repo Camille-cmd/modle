@@ -79,6 +79,9 @@ def start_game():
 
     # End the game if we ran out of tries
     if modle.game.out_of_tries:
+        # display one last time
+        modle.display_modle()
+        modle.delete_multiple_lines(1)
         if modle.try_again():
             start_game()
         else:
