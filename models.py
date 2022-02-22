@@ -71,9 +71,10 @@ class ModleGame:
                     self.final_output += "🟩"
                 else:
                     # if the guess has several time the same letter and our word not
-                    # we need to define if the letter is already in yellow for this word
-                    is_letter_duplicate = guess.count(letter) > self.word_to_guess.count(letter)
-                    if is_letter_duplicate and letter in tmp_letter_yellow or letter in tmp_letter_green:
+                    # we need to define if the letter is already colored for this word
+                    is_letter_duplicate = guess.count(letter) == self.word_to_guess.count(letter)
+                    already_colored = letter in tmp_letter_yellow or letter in tmp_letter_green
+                    if not is_letter_duplicate and already_colored:
                         word_output.append(Style.BRIGHT + Fore.LIGHTBLACK_EX + letter)
                         self.letters_grey.append(letter)
                         self.final_output += "⬛"
